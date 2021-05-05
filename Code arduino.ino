@@ -1,26 +1,30 @@
 #include <Arduino.h>
-
 #include <ESPWiFi.h>
 #include <ESPHTTPClient.h>
 #include <JsonListener.h>
-
+//LED
+#include <FastLED.h>
 // time
 #include <time.h>                       // time() ctime()
 #include <sys/time.h>                   // struct timeval
 #include <coredecls.h>                  // settimeofday_cb()
 
-#include "SSD1306Wire.h"
-#include "OLEDDisplayUi.h"
-#include "Wire.h"
 #include "OpenWeatherMapCurrent.h"
 #include "OpenWeatherMapForecast.h"
-#include "WeatherStationFonts.h"
-#include "WeatherStationImages.h"
-
 
 /***************************
  * Begin Settings
  **************************/
+// Pins LED 
+
+#define BLUE 3
+#define GREEN 5
+#define RED 6
+
+#define delayTime 10 // fading time
+
+int MAX_LUM = 255;
+int redVal,greenVal,blueVal;
 
 // WIFI
 const char* WIFI_SSID = "yourssid";
@@ -30,18 +34,7 @@ const char* WIFI_PWD = "yourpassw0rd";
 #define DST_MN          60      // use 60mn for summer time in some countries
 
 // Setup
-const int UPDATE_INTERVAL_SECS = 20 * 60; // Update every 20 minutes
-
-// Display Settings
-const int I2C_DISPLAY_ADDRESS = 0x3c;
-#if defined(ESP8266)
-const int SDA_PIN = D3;
-const int SDC_PIN = D4;
-#else
-const int SDA_PIN = 5; //D3;
-const int SDC_PIN = 4; //D4;
-#endif
-
+const int UPDATE_INTERVAL_SECS = 2 * 60; // Update every 2 minutes // allow 60 calls/mins with openweathermap
 
 // OpenWeatherMap Settings
 // Sign up here to get an API key:
@@ -53,42 +46,23 @@ result set and select the entry closest to the actual location you want to displ
 data for. It'll be a URL like https://openweathermap.org/city/2657896. The number
 at the end is what you assign to the constant below.
  */
-String OPEN_WEATHER_MAP_LOCATION_ID = "2657896";
+String OPEN_WEATHER_MAP_LOCATION_ID = "2988507"; // paris
 
-// Pick a language code from this list:
-// Arabic - ar, Bulgarian - bg, Catalan - ca, Czech - cz, German - de, Greek - el,
-// English - en, Persian (Farsi) - fa, Finnish - fi, French - fr, Galician - gl,
-// Croatian - hr, Hungarian - hu, Italian - it, Japanese - ja, Korean - kr,
-// Latvian - la, Lithuanian - lt, Macedonian - mk, Dutch - nl, Polish - pl,
-// Portuguese - pt, Romanian - ro, Russian - ru, Swedish - se, Slovak - sk,
-// Slovenian - sl, Spanish - es, Turkish - tr, Ukrainian - ua, Vietnamese - vi,
-// Chinese Simplified - zh_cn, Chinese Traditional - zh_tw.
-String OPEN_WEATHER_MAP_LANGUAGE = "de";
+String OPEN_WEATHER_MAP_LANGUAGE = "fr";
 const uint8_t MAX_FORECASTS = 4;
-
 const boolean IS_METRIC = true;
-
-// Adjust according to your language
-const String WDAY_NAMES[] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
-const String MONTH_NAMES[] = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-
 /***************************
  * End Settings
  **************************/
- // Initialize the oled display for address 0x3c
- // sda-pin=14 and sdc-pin=12
- SSD1306Wire     display(I2C_DISPLAY_ADDRESS, SDA_PIN, SDC_PIN);
- OLEDDisplayUi   ui( &display );
-
 OpenWeatherMapCurrentData currentWeather;
 OpenWeatherMapCurrent currentWeatherClient;
 
 OpenWeatherMapForecastData forecasts[MAX_FORECASTS];
 OpenWeatherMapForecast forecastClient;
 
-#define TZ_MN           ((TZ)*60)
-#define TZ_SEC          ((TZ)*3600)
-#define DST_SEC         ((DST_MN)*60)
+#define TZ_MN           ((TZ)*60) // ca veux dire quoi ?
+#define TZ_SEC          ((TZ)*3600) // ca veux dire quoi ?
+#define DST_SEC         ((DST_MN)*60) // ca veux dire quoi ?
 time_t now;
 
 // flag changed in the ticker function every 10 minutes
@@ -99,54 +73,34 @@ String lastUpdate = "--";
 long timeSinceLastWUpdate = 0;
 
 //declaring prototypes
-void drawProgress(OLEDDisplay *display, int percentage, String label);
-void updateData(OLEDDisplay *display);
-void drawDateTime(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void drawCurrentWeather(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void drawForecast(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void drawForecastDetails(OLEDDisplay *display, int x, int y, int dayIndex);
-void drawHeaderOverlay(OLEDDisplay *display, OLEDDisplayUiState* state);
-void setReadyForWeatherUpdate();
-
+// void ( adapt to light LED )
 
 // Add frames
 // this array keeps function pointers to all frames
 // frames are the single views that slide from right to left
-FrameCallback frames[] = { drawDateTime, drawCurrentWeather, drawForecast };
-int numberOfFrames = 3;
+FrameCallback frames[] = { drawDateTime, drawCurrentWeather, drawForecast };  // ca veux dire quoi ?
+int numberOfFrames = 3;  // ca veux dire quoi ?
 
-OverlayCallback overlays[] = { drawHeaderOverlay };
-int numberOfOverlays = 1;
+OverlayCallback overlays[] = { drawHeaderOverlay };  // ca veux dire quoi ?
+int numberOfOverlays = 1;  // ca veux dire quoi ?
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println();
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(BLUE, LOW);
 
-  // initialize dispaly
-  display.init();
-  display.clear();
-  display.display();
+  // initialize light
+  
 
-  //display.flipScreenVertically();
+  //display.flipScreenVertically();  // ca veux dire quoi ?
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setContrast(255);
 
-  WiFi.begin(WIFI_SSID, WIFI_PWD);
-
-  int counter = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    display.clear();
-    display.drawString(64, 10, "Connecting to WiFi");
-    display.drawXbm(46, 30, 8, 8, counter % 3 == 0 ? activeSymbole : inactiveSymbole);
-    display.drawXbm(60, 30, 8, 8, counter % 3 == 1 ? activeSymbole : inactiveSymbole);
-    display.drawXbm(74, 30, 8, 8, counter % 3 == 2 ? activeSymbole : inactiveSymbole);
-    display.display();
-
-    counter++;
+ WiFi.begin(WIFI_SSID, WIFI_PWD);
   }
   // Get time from network time service
   configTime(TZ_SEC, DST_SEC, "pool.ntp.org");
@@ -268,11 +222,7 @@ void drawCurrentWeather(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t
 }
 
 
-void drawForecast(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  drawForecastDetails(display, x, y, 0);
-  drawForecastDetails(display, x + 44, y, 1);
-  drawForecastDetails(display, x + 88, y, 2);
-}
+
 
 void drawForecastDetails(OLEDDisplay *display, int x, int y, int dayIndex) {
   time_t observationTimestamp = forecasts[dayIndex].observationTime;
@@ -305,6 +255,12 @@ void drawHeaderOverlay(OLEDDisplay *display, OLEDDisplayUiState* state) {
   String temp = String(currentWeather.temp, 1) + (IS_METRIC ? "°C" : "°F");
   display->drawString(128, 54, temp);
   display->drawHorizontalLine(0, 52, 128);
+}
+
+void lightRGB(int r, int g, int b){
+  analogWrite(RED, r);
+  analogWrite(GREEN, g);
+  analogWrite(BLUE, b);
 }
 
 void setReadyForWeatherUpdate() {
