@@ -36,7 +36,7 @@ void setup() {
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
  
-  Serial.println("Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading.");
+  //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
 }
 
 void loop() {
@@ -51,8 +51,8 @@ void loop() {
       JSONVar myObject = JSON.parse(jsonBuffer);
   
       // JSON.typeof(jsonVar) can be used to get the type of the var
-      if (JSON.typeof(myObject) == "undefined") {
-        Serial.println("Parsing input failed!");
+      if (JSON.typeof(myObject) == "undefined") { // find a way to show on the box wifi statut
+        Serial.println("Parsing input failed!"); // find a way to show on the box wifi statut
         return;
       }
     
@@ -68,7 +68,7 @@ void loop() {
       Serial.println(myObject["wind"]["speed"]);
     }
     else {
-      Serial.println("WiFi Disconnected");
+      Serial.println("WiFi Disconnected"); // find a way to show on the box wifi statut
     }
     lastTime = millis();
   }
