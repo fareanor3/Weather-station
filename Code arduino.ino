@@ -8,8 +8,8 @@
 #include <Arduino_JSON.h>
 
 // wifi set up values
-const char* ssid = "SSID";
-const char* password = "PASSWORD";
+const String ssid = "SSID";
+const String password = "PASSWORD";
 // pin set up values
 const int wifi_led_statue = ; // to define pin number
 const int sun = ; // to define pin number
