@@ -73,7 +73,7 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   // Send an HTTP GET request
-  if ((millis() - lastTime) > timerDelay) { // millis meaning ?
+  if ((millis() - lastTime) > timerDelay) {
     // Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
       String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + countryCode + "&APPID=" + openWeatherMapApiKey;
@@ -90,6 +90,8 @@ void loop() {
     
       Serial.print("JSON object = ");
       Serial.println(myObject);
+      Serial.print("Weather group: ");
+      Serial.println(myObject["weather"]["main"]);
       Serial.print("Temperature: ");
       Serial.println(myObject["main"]["temp"]);
       Serial.print("Pressure: ");
