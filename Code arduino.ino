@@ -1,7 +1,3 @@
-//fareanor3 Update Code arduino.ino
-//Latest commit 9d23874
-//101 lines (83 sloc)  2.94 KB
-  
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
@@ -11,11 +7,11 @@
 const String ssid = "SSID";
 const String password = "PASSWORD";
 // pin set up values
-const int wifi_led_statue = ; // to define pin number
-const int sun = ; // to define pin number
-const int cloud = ; // to define pin number
-const int rain = ; // to define pin number
-const int snow = ; // to define pin number
+const int wifi_led_statue = 7; // to define pin number
+const int sun = 6; // to define pin number
+const int cloud = 5; // to define pin number
+const int rain = 4; // to define pin number
+const int snow = 3; // to define pin number
 
 // differents configurations
 
@@ -52,20 +48,26 @@ void setup() {
   pinMode(rain, OUTPUT);
   pinMode(snow, OUTPUT);
 
-  Serial.begin(115200); // what does it's mean
+  Serial.begin(9600); // nb bit/s to PC
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
-    delay(500); // blink 2 times/s
-    for (int count = 0; count < 3; count++) {
-    digitalWrite(//pin a déterminer , HIGH);
-    delay(500);
-    digitalWrite(//pin a déterminer , LOW)
-    delay(250);
+    delay(500); //3 blink each 2 times/s
+      for (int count = 0; count < 3; count++) {
+       digitalWrite(wifi_led_statue, HIGH);
+       delay(500);
+       digitalWrite(wifi_led_statue, LOW)
+       delay(250);
   }; // change to a blue leds blink during time connection
   }
   Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: "); // change to a triple red blink of all the leds
+  Serial.print("Connected to WiFi network with IP Address: ");
+  for (int count = 0; count < 3; count++) {
+       digitalWrite(wifi_led_statue, HIGH);
+       delay(500);
+       digitalWrite(wifi_led_statue, LOW);
+       delay(250);
+  }; // change to a triple red leds blink 
  
   //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
 }
@@ -92,17 +94,31 @@ void loop() {
       Serial.println(myObject);
       Serial.print("Weather group: ");
       Serial.println(myObject["weather"]["main"]);
-      Serial.print("Temperature: ");
-      Serial.println(myObject["main"]["temp"]);
-      Serial.print("Pressure: ");
-      Serial.println(myObject["main"]["pressure"]);
-      Serial.print("Humidity: ");
-      Serial.println(myObject["main"]["humidity"]);
-      Serial.print("Wind Speed: ");
-      Serial.println(myObject["wind"]["speed"]);
+      if(myObject["weather"]["main"]=="Clouds") {
+        digitalWrite(cloud, HIGH);
+        delay(500);
+        digitalWrite(cloud, LOW);};
+      if(myObject["weather"]["main"]=="Clear") {
+        digitalWrite(sun, HIGH);
+        delay(500);
+        digitalWrite(sun, LOW);};
+      if(myObject["weather"]["main"]=="Rain") {
+        digitalWrite(rain, HIGH);
+        delay(500);
+        digitalWrite(rain, LOW);};
+      if(myObject["weather"]["main"]=="Snow") {
+        digitalWrite(snow, HIGH);
+        delay(500);
+        digitalWrite(snow, LOW);};
     }
     else {
       Serial.println("WiFi Disconnected"); // find a way to show on the box wifi statut
+      for (int count = 0; count < 3; count++) {
+        digitalWrite(wifi_led_statue, HIGH);
+        delay(250);
+        digitalWrite(wifi_led_statue, LOW);
+        delay(500);
+      delay(500);
     }
     lastTime = millis();
   }
@@ -119,7 +135,7 @@ String httpGETRequest(const char* serverName) {
   
   String payload = "{}"; // payload = find meaning
   
-  if (httpResponseCode>0) {
+  if (httpResponseCode >= 200 && httpResponseCode<300 ) {
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
     payload = http.getString();
@@ -133,4 +149,3 @@ String httpGETRequest(const char* serverName) {
 
   return payload;
 }
-//© 2021 GitHub, Inc.
