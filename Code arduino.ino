@@ -16,8 +16,8 @@ const int snow = 3; // to define pin number
 // differents configurations
 
 //     | Sun | cloud | rain | snow | temperature | total weather id |
-//  1  | X   |       |      |      |             |   ? to define    |
-//  2  | X   |   X   |      |      |             |   ? to define    | 
+//  1  |  X  |       |      |      |             |   ? to define    |
+//  2  |  X  |   X   |      |      |             |   ? to define    | 
 //  3  |     |   X   |      |      |             |   ? to define    |
 //  4  |     |   X   |  X   |      |             |   ? to define    |
 //  5  |     |   X   |      |  X   |             |   ? to define    |
@@ -52,12 +52,12 @@ void setup() {
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500); //3 blink each 2 times/s
-      for (int count = 0; count < 3; count++) {
-       digitalWrite(wifi_led_statue, HIGH);
-       delay(500);
-       digitalWrite(wifi_led_statue, LOW)
-       delay(250);
-  }; // change to a blue leds blink during time connection
+    for (int count = 0; count < 3; count++) {
+      digitalWrite(wifi_led_statue, HIGH);
+      delay(500);
+      digitalWrite(wifi_led_statue, LOW)
+      delay(250);
+    }; // change to a blue leds blink during time connection
   }
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
@@ -66,8 +66,7 @@ void setup() {
        delay(500);
        digitalWrite(wifi_led_statue, LOW);
        delay(250);
-  }; // change to a triple red leds blink 
- 
+  }; // change to a triple red leds blink
   //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
 }
 
@@ -88,7 +87,7 @@ void loop() {
         Serial.println("Parsing input failed!"); // find a way to show on the box fail statut
         return;
       }
-    
+
       Serial.print("JSON object = ");
       Serial.println(myObject);
       Serial.print("Weather group: ");
