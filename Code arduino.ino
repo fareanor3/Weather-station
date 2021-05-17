@@ -25,7 +25,6 @@ const int snow = 3; // to define pin number
 
 // Your Domain name with URL path or IP address with path
 String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
-
 String city = "Paris";
 String countryCode = "FR";
 
