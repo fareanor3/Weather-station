@@ -1,29 +1,30 @@
+// esp8266 import
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <Arduino_JSON.h>
 #include <Adafruit_NeoPixel.h>
+
+// strip led import
+
 #ifdef __AVR__
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
-// Which pin on the Arduino is connected to the NeoPixels?
-// On a Trinket or Gemma we suggest changing this to 1:
-
 #define LED_PIN    6 // pin output
-
-// How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 5
+#define LED_COUNT 5 // number of pins
 
 // wifi set up values
 const String ssid = "SSID";
 const String password = "PASSWORD";
-// pin set up values
-const int wifi_led_statue = 0; // is also temperature
-const int sun = 1; // to redefine led number
-const int cloud = 2; // to redefine led number
-const int rain = 3; // to redefine led number
-const int snow = 4; // to redefine led number
+// led set up values
+int wifi_led_statue = 0; // is also temperature
+int sun = 1; // to redefine led number
+int cloud = 2; // to redefine led number
+int rain = 3; // to redefine led number
+int snow = 4; // to redefine led number
+uint32_t Tcolor; // temperature color
 
 // Your Domain name with URL path or IP address with path
 String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
@@ -42,12 +43,8 @@ String jsonBuffer;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-
-  pinMode(wifi_led_statue, OUTPUT);
-  pinMode(sun, OUTPUT);
-  pinMode(cloud, OUTPUT);
-  pinMode(rain, OUTPUT);
-  pinMode(snow, OUTPUT);
+  // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
+  // Any other board, you can remove this part (but no harm leaving it):
   #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
   #endif
@@ -55,28 +52,28 @@ void setup() {
 
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
-  strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+  strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
 }
 
   Serial.begin(9600); // nb bit/s to eternal device
   WiFi.begin(ssid, password);
-  Serial.println("Connecting");
+  // during connection :
   while(WiFi.status() != WL_CONNECTED) {
-    for (int count = 0; count < 3; count++) { //triple light blue leds blink
-      strip.clear();
-      strip.setPixelColor(wifi_led_statue, strip.Color(0,125,225));         //  Set pixel's color (in RAM)
-      strip.show();                          //  Update strip to match
-      delay(200);
-      strip.clear();
-      strip.show(); 
-      delay(200);
+    for (int i = -5; i < 5; i += 1) { // light blue leds blink waves
+    strip.clear();
+    strip.setPixelColor(abs(i), strip.Color(0,125,225)); // Set pixel's color (in RAM)
+    strip.show(); //  Update strip to match
+    delay(200);
+    strip.clear()
+    strip.show();
+    delay(200);
     };
 
-  // when connected
+  // when connected :
   for (int count = 0; count < 3; count++) { //triple light pink leds blink
       strip.clear();
-      strip.setPixelColor(wifi_led_statue, strip.Color(255,25,75));         //  Set pixel's color (in RAM)
-      strip.show();                          //  Update strip to match
+      strip.setPixelColor(wifi_led_statue, strip.Color(255,25,75));
+      strip.show();
       delay(200);
       strip.clear();
       strip.show(); 
@@ -168,6 +165,26 @@ void loop() {
         digitalWrite(cloud, LOW);
         digitalWrite(rain, LOW);
       }
+      if (myObject["main"]["temp"]<0){ // change a to temperature
+        Tcolor = strip.Color(0, 0, 255);//blue
+      }
+      if (myObject["main"]["temp"]>0 && myObject["main"]["temp"]<10){
+        Tcolor = strip.Color(0, 255, 255);
+      }
+      if (myObject["main"]["temp"]>10 && myObject["main"]["temp"] <20){
+        Tcolor = strip.Color(0, 255, 50);
+      }
+      if (myObject["main"]["temp"]>20 && myObject["main"]["temp"] <30){
+      Tcolor = strip.Color(255, 255, 0);
+      }
+      if (myObject["main"]["temp"]>30 && myObject["main"]["temp"] <40){
+      Tcolor = strip.Color(255, 150, 50);
+      }
+      else (myObject["main"]["temp"]>40){
+        Tcolor = strip.Color(255, 0, 0);//red
+      }
+      strip.setPixelColor(wifi_led_statue,Tcolor);       // strip.Color(225, 25, 75) Set pixel's color (in RAM)
+      strip.show();                          //  Update strip to match
     }
     else {
       Serial.println("WiFi Disconnected"); // find a way to show on the box wifi statut
