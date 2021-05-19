@@ -2,16 +2,28 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <Arduino_JSON.h>
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+
+// Which pin on the Arduino is connected to the NeoPixels?
+// On a Trinket or Gemma we suggest changing this to 1:
+
+#define LED_PIN    6 // pin output
+
+// How many NeoPixels are attached to the Arduino?
+#define LED_COUNT 5
 
 // wifi set up values
 const String ssid = "SSID";
 const String password = "PASSWORD";
 // pin set up values
-const int wifi_led_statue = 7; // to redefine pin number
-const int sun = 6; // to redefine pin number
-const int cloud = 5; // to redefine pin number
-const int rain = 4; // to redefine pin number
-const int snow = 3; // to redefine pin number
+const int wifi_led_statue = 0; // is also temperature
+const int sun = 1; // to redefine led number
+const int cloud = 2; // to redefine led number
+const int rain = 3; // to redefine led number
+const int snow = 4; // to redefine led number
 
 // Your Domain name with URL path or IP address with path
 String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
@@ -36,27 +48,41 @@ void setup() {
   pinMode(cloud, OUTPUT);
   pinMode(rain, OUTPUT);
   pinMode(snow, OUTPUT);
+  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+  clock_prescale_set(clock_div_1);
+  #endif
+  // END of Trinket-specific code.
+
+  strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip.show();            // Turn OFF all pixels ASAP
+  strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+}
 
   Serial.begin(9600); // nb bit/s to eternal device
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
-    delay(500); //3 blink each 2 times/s
-    for (int count = 0; count < 3; count++) {
-      digitalWrite(wifi_led_statue, HIGH);
-      delay(500);
-      digitalWrite(wifi_led_statue, LOW)
-      delay(250);
-    }; // change to a blue leds blink during time connection
-  }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  for (int count = 0; count < 3; count++) {
-       digitalWrite(wifi_led_statue, HIGH);
-       delay(500);
-       digitalWrite(wifi_led_statue, LOW);
-       delay(250);
-  }; // change to a triple red leds blink
+    for (int count = 0; count < 3; count++) { //triple light blue leds blink
+      strip.clear();
+      strip.setPixelColor(wifi_led_statue, strip.Color(0,125,225));         //  Set pixel's color (in RAM)
+      strip.show();                          //  Update strip to match
+      delay(200);
+      strip.clear();
+      strip.show(); 
+      delay(200);
+    };
+
+  // when connected
+  for (int count = 0; count < 3; count++) { //triple light pink leds blink
+      strip.clear();
+      strip.setPixelColor(wifi_led_statue, strip.Color(255,25,75));         //  Set pixel's color (in RAM)
+      strip.show();                          //  Update strip to match
+      delay(200);
+      strip.clear();
+      strip.show(); 
+      delay(200);
+    };
+  };
   //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
 }
 
@@ -94,26 +120,28 @@ void loop() {
       Serial.println(myObject["weather"]["main"]);
       // cas 1
       if(myObject["weather"]["id"] = 800) {
+        strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(sun, HIGH);
-        delay(timerDelay); -// automate change to good values
+        delay(timerDelay); -// automate change to good value
         digitalWrite(sun, LOW);
       }
       // cas 2
       if(myObject["weather"]["id"] = 801) {
-        digitalWrite(sun, HIGH);
-        digitalWrite(cloud, HIGH);
-        delay(timerDelay));
-        digitalWrite(sun, LOW);
-        digitalWrite(cloud, LOW);
+        strip.clear();         //   Set all pixels in RAM to 0 (off)
+        strip.setPixelColor(sun, strip.Color(255,   0,   0));        //  Set pixel's color (in RAM)
+        strip.setPixelColor(cloud, strip.Color(255,   0,   0)); 
+        strip.show();                          //  Update strip to match 
       }
       // cas 3
       if(myObject["weather"]["id"] >= 802 && myObject["weather"]["id"] <= 804 ){
+        strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(cloud, HIGH);
         delay(timerDelay);
         digitalWrite(cloud, LOW);
       }
       // cas 4
-      if(myObject["weather"]["id"] >= 200 && myObject["weather"]["id"] <= 321 ) && (myObject["weather"]["id"] <= 520 && myObject["weather"]["id"] >= 531){ 
+      if(myObject["weather"]["id"] >= 200 && myObject["weather"]["id"] <= 321 ) && (myObject["weather"]["id"] <= 520 && myObject["weather"]["id"] >= 531){
+        strip.clear();         //   Set all pixels in RAM to 0 (off) 
         digitalWrite(cloud, HIGH);
         digitalWrite(rain, HIGH);
         delay(timerDelay);
@@ -122,6 +150,7 @@ void loop() {
       }
       // cas 5
       if(myObject["weather"]["id"] >= 600 && myObject["weather"]["id"] <= 622 ){
+        strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(cloud, HIGH);
         digitalWrite(snow, HIGH);
         delay(timerDelay);
@@ -130,6 +159,7 @@ void loop() {
       }
       // cas 6
       if(myObject["weather"]["id"] >= 500 && myObject["weather"]["id"] <= 504 ){
+        strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(sun, HIGH);
         digitalWrite(cloud, HIGH);
         digitalWrite(rain, HIGH);
