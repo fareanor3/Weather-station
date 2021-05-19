@@ -7,21 +7,11 @@
 const String ssid = "SSID";
 const String password = "PASSWORD";
 // pin set up values
-const int wifi_led_statue = 7; // to define pin number
-const int sun = 6; // to define pin number
-const int cloud = 5; // to define pin number
-const int rain = 4; // to define pin number
-const int snow = 3; // to define pin number
-
-// differents configurations
-
-//     | Sun | cloud | rain | snow |  total weather id |
-//  1  |  X  |       |      |      |       800         |
-//  2  |  X  |   X   |      |      |       801         |
-//  3  |     |   X   |      |      |      802-4        |
-//  4  |     |   X   |  X   |      |  200-321 520-31   |
-//  5  |     |   X   |      |  X   |      600-22       |
-//  6  |  X  |   X   |  X   |      |       500-4       |
+const int wifi_led_statue = 7; // to redefine pin number
+const int sun = 6; // to redefine pin number
+const int cloud = 5; // to redefine pin number
+const int rain = 4; // to redefine pin number
+const int snow = 3; // to redefine pin number
 
 // Your Domain name with URL path or IP address with path
 String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
@@ -70,6 +60,16 @@ void setup() {
   //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
 }
 
+// differents configurations
+
+//     | Sun | cloud | rain | snow |  total weather id |
+//  1  |  X  |       |      |      |       800         |
+//  2  |  X  |   X   |      |      |       801         |
+//  3  |     |   X   |      |      |      802-4        |
+//  4  |     |   X   |  X   |      |  200-321 520-31   |
+//  5  |     |   X   |      |  X   |      600-22       |
+//  6  |  X  |   X   |  X   |      |       500-4       |
+
 // the loop function runs over and over again forever
 void loop() {
   // Send an HTTP GET request
@@ -92,22 +92,52 @@ void loop() {
       Serial.println(myObject);
       Serial.print("Weather group: ");
       Serial.println(myObject["weather"]["main"]);
-      if(myObject["weather"]["main"]=="Clouds") {
-        digitalWrite(cloud, HIGH);
-        delay(500);
-        digitalWrite(cloud, LOW);};
-      if(myObject["weather"]["main"]=="Clear") {
+      // cas 1
+      if(myObject["weather"]["id"] = 800) {
         digitalWrite(sun, HIGH);
-        delay(500);
-        digitalWrite(sun, LOW);};
-      if(myObject["weather"]["main"]=="Rain") {
+        delay(timerDelay); -// automate change to good values
+        digitalWrite(sun, LOW);
+      }
+      // cas 2
+      if(myObject["weather"]["id"] = 801) {
+        digitalWrite(sun, HIGH);
+        digitalWrite(cloud, HIGH);
+        delay(timerDelay));
+        digitalWrite(sun, LOW);
+        digitalWrite(cloud, LOW);
+      }
+      // cas 3
+      if(myObject["weather"]["id"] >= 802 && myObject["weather"]["id"] <= 804 ){
+        digitalWrite(cloud, HIGH);
+        delay(timerDelay);
+        digitalWrite(cloud, LOW);
+      }
+      // cas 4
+      if(myObject["weather"]["id"] >= 200 && myObject["weather"]["id"] <= 321 ) && (myObject["weather"]["id"] <= 520 && myObject["weather"]["id"] >= 531){ 
+        digitalWrite(cloud, HIGH);
         digitalWrite(rain, HIGH);
-        delay(500);
-        digitalWrite(rain, LOW);};
-      if(myObject["weather"]["main"]=="Snow") {
+        delay(timerDelay);
+        digitalWrite(cloud, LOW);
+        digitalWrite(rain, Low);
+      }
+      // cas 5
+      if(myObject["weather"]["id"] >= 600 && myObject["weather"]["id"] <= 622 ){
+        digitalWrite(cloud, HIGH);
         digitalWrite(snow, HIGH);
-        delay(500);
-        digitalWrite(snow, LOW);};
+        delay(timerDelay);
+        digitalWrite(cloud, LOW);
+        digitalWrite(snow, LOW);
+      }
+      // cas 6
+      if(myObject["weather"]["id"] >= 500 && myObject["weather"]["id"] <= 504 ){
+        digitalWrite(sun, HIGH);
+        digitalWrite(cloud, HIGH);
+        digitalWrite(rain, HIGH);
+        delay(timerDelay);
+        digitalWrite(sun, LOW);
+        digitalWrite(cloud, LOW);
+        digitalWrite(rain, LOW);
+      }
     }
     else {
       Serial.println("WiFi Disconnected"); // find a way to show on the box wifi statut
