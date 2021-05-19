@@ -15,13 +15,13 @@ const int snow = 3; // to define pin number
 
 // differents configurations
 
-//     | Sun | cloud | rain | snow | temperature | total weather id |
-//  1  |  X  |       |      |      |             |   ? to define    |
-//  2  |  X  |   X   |      |      |             |   ? to define    | 
-//  3  |     |   X   |      |      |             |   ? to define    |
-//  4  |     |   X   |  X   |      |             |   ? to define    |
-//  5  |     |   X   |      |  X   |             |   ? to define    |
-//  6  |     |   X   |  X   |  X   |             |   ? to define    |
+//     | Sun | cloud | rain | snow |  total weather id |
+//  1  |  X  |       |      |      |       800         |
+//  2  |  X  |   X   |      |      |       801         |
+//  3  |     |   X   |      |      |      802-4        |
+//  4  |     |   X   |  X   |      |  200-321 520-31   |
+//  5  |     |   X   |      |  X   |      600-22       |
+//  6  |  X  |   X   |  X   |      |       500-4       |
 
 // Your Domain name with URL path or IP address with path
 String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
@@ -47,7 +47,7 @@ void setup() {
   pinMode(rain, OUTPUT);
   pinMode(snow, OUTPUT);
 
-  Serial.begin(9600); // nb bit/s to PC
+  Serial.begin(9600); // nb bit/s to eternal device
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
@@ -144,6 +144,5 @@ String httpGETRequest(const char* serverName) {
   }
   // Free resources
   http.end();
-
   return payload;
 }
