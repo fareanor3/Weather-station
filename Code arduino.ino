@@ -28,7 +28,7 @@ int snow = 4; // to redefine led number
 uint32_t Tcolor; // temperature color
 
 // Your Domain name with URL path or IP address with path
-String openWeatherMapApiKey = "2cfb8b7651c67831d45a71696a207ff8"; //api key
+String openWeatherMapApiKey = "463e3d3bf6f2a1282f9280434c7d6678"; //api key
 String city = "Paris";
 String countryCode = "FR";
 
@@ -46,9 +46,9 @@ String jsonBuffer;
 void setup() {
   Serial.begin(9600); // nb bit/s to eternal device
   Serial.println("bebut");
-  //strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-  //strip.show();            // Turn OFF all pixels ASAP
-  //strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
+  strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip.show();            // Turn OFF all pixels ASAP
+  strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
   Serial.println("Strip");
 
  
@@ -94,6 +94,7 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
+  
   // Send an HTTP GET request
   if ((millis() - lastTime) > timerDelay) {
     // Check WiFi connection status
@@ -101,7 +102,7 @@ void loop() {
       String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + countryCode + "&appid=" + openWeatherMapApiKey;
       
       jsonBuffer = httpGETRequest(serverPath.c_str());
-      Serial.println(jsonBuffer);
+      //Serial.println(jsonBuffer);
       JSONVar myObject = JSON.parse(jsonBuffer);
 
       // JSON.typeof(jsonVar) can be used to get the type of the var
@@ -192,6 +193,7 @@ void loop() {
     lastTime = millis();
   }
  }
+ delay(20000);
 }
 
 String httpGETRequest(const char* serverName) {
