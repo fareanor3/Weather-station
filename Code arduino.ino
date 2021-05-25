@@ -28,7 +28,7 @@ int snow = 4; // to redefine led number
 uint32_t Tcolor; // temperature color
 
 // Your Domain name with URL path or IP address with path
-String openWeatherMapApiKey = "bf7dcd4f6c9b368dae6cc55b5dbcdbafY"; //api key
+String openWeatherMapApiKey = "2cfb8b7651c67831d45a71696a207ff8"; //api key
 String city = "Paris";
 String countryCode = "FR";
 
@@ -98,7 +98,7 @@ void loop() {
   if ((millis() - lastTime) > timerDelay) {
     // Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
-      String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + countryCode + "&APPID=" + openWeatherMapApiKey;
+      String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + countryCode + "&appid=" + openWeatherMapApiKey;
       
       jsonBuffer = httpGETRequest(serverPath.c_str());
       Serial.println(jsonBuffer);
