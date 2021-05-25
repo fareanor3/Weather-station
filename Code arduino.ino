@@ -44,21 +44,19 @@ String jsonBuffer;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
-  // Any other board, you can remove this part (but no harm leaving it):
-  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
-  clock_prescale_set(clock_div_1);
-  #endif
-  // END of Trinket-specific code.
-
-  strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-  strip.show();            // Turn OFF all pixels ASAP
-  strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
-
   Serial.begin(9600); // nb bit/s to eternal device
+  Serial.println("bebut");
+  //strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+  //strip.show();            // Turn OFF all pixels ASAP
+  //strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
+  Serial.println("Strip");
+
+ 
   WiFi.begin(ssid, password);
+  Serial.println("Wifi");
   // during connection :
   while(WiFi.status() != WL_CONNECTED) {
+    Serial.println("NC");
     for (int i = -5; i < 5; i += 1) { // light blue leds blink waves
     strip.clear();
     strip.setPixelColor(abs(i), strip.Color(0,125,225)); // Set pixel's color (in RAM)
@@ -68,6 +66,7 @@ void setup() {
     strip.show();
     delay(200);
     };
+  }
 
   // when connected :
   for (int count = 0; count < 3; count++) { //triple light pink leds blink
@@ -79,8 +78,8 @@ void setup() {
       strip.show(); 
       delay(200);
     };
-  };
   //Timer set to 10 seconds (timerDelay variable), it will take 10 seconds before publishing the first reading
+  Serial.println("Set up fini");
 }
 
 // differents configurations
