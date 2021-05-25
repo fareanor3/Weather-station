@@ -17,7 +17,7 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // wifi set up values
-const String ssid = "lenovo";
+const String ssid = "Lenovo";
 const String password = "plus1mple";
 // led set up values
 int wifi_led_statue = 0; // is also temperature
