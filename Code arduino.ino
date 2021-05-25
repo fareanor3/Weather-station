@@ -12,12 +12,13 @@
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED_PIN    6 // pin output
+#define LED_PIN   6 // pin output
 #define LED_COUNT 5 // number of pins
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // wifi set up values
-const String ssid = "SSID";
-const String password = "PASSWORD";
+const String ssid = "lenovo";
+const String password = "plus1mple";
 // led set up values
 int wifi_led_statue = 0; // is also temperature
 int sun = 1; // to redefine led number
@@ -53,7 +54,6 @@ void setup() {
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
   strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
-}
 
   Serial.begin(9600); // nb bit/s to eternal device
   WiFi.begin(ssid, password);
@@ -64,7 +64,7 @@ void setup() {
     strip.setPixelColor(abs(i), strip.Color(0,125,225)); // Set pixel's color (in RAM)
     strip.show(); //  Update strip to match
     delay(200);
-    strip.clear()
+    strip.clear();
     strip.show();
     delay(200);
     };
@@ -104,49 +104,44 @@ void loop() {
       jsonBuffer = httpGETRequest(serverPath.c_str());
       Serial.println(jsonBuffer);
       JSONVar myObject = JSON.parse(jsonBuffer);
-  
+
       // JSON.typeof(jsonVar) can be used to get the type of the var
       if (JSON.typeof(myObject) == "undefined") { // find a way to show on the box fail statut
         Serial.println("Parsing input failed!"); // find a way to show on the box fail statut
         return;
       }
-
-      Serial.print("JSON object = ");
-      Serial.println(myObject);
-      Serial.print("Weather group: ");
-      Serial.println(myObject["weather"]["main"]);
       // cas 1
-      if(myObject["weather"]["id"] = 800) {
+      if(int(myObject["weather"]["id"]) == 800) {
         strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(sun, HIGH);
-        delay(timerDelay); -// automate change to good value
+        delay(timerDelay); // automate change to good value
         digitalWrite(sun, LOW);
       }
       // cas 2
-      if(myObject["weather"]["id"] = 801) {
+      if (int(myObject["weather"]["id"]) == 801) {
         strip.clear();         //   Set all pixels in RAM to 0 (off)
         strip.setPixelColor(sun, strip.Color(255,   0,   0));        //  Set pixel's color (in RAM)
         strip.setPixelColor(cloud, strip.Color(255,   0,   0)); 
         strip.show();                          //  Update strip to match 
       }
       // cas 3
-      if(myObject["weather"]["id"] >= 802 && myObject["weather"]["id"] <= 804 ){
+      if(int(myObject["weather"]["id"]) >= 802 && int(myObject["weather"]["id"]) <= 804 ){
         strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(cloud, HIGH);
         delay(timerDelay);
         digitalWrite(cloud, LOW);
       }
       // cas 4
-      if(myObject["weather"]["id"] >= 200 && myObject["weather"]["id"] <= 321 ) && (myObject["weather"]["id"] <= 520 && myObject["weather"]["id"] >= 531){
+      if(int(myObject["weather"]["id"]) >= 200 && int(myObject["weather"]["id"]) <= 321  && int(myObject["weather"]["id"]) >= 520 && int(myObject["weather"]["id"]) <= 531){
         strip.clear();         //   Set all pixels in RAM to 0 (off) 
         digitalWrite(cloud, HIGH);
         digitalWrite(rain, HIGH);
         delay(timerDelay);
         digitalWrite(cloud, LOW);
-        digitalWrite(rain, Low);
+        digitalWrite(rain, LOW);
       }
       // cas 5
-      if(myObject["weather"]["id"] >= 600 && myObject["weather"]["id"] <= 622 ){
+      if(int(myObject["weather"]["id"]) >= 600 && int(myObject["weather"]["id"]) <= 622 ){
         strip.clear();         //   Set all pixels in RAM to 0 (off)
         digitalWrite(cloud, HIGH);
         digitalWrite(snow, HIGH);
@@ -155,8 +150,8 @@ void loop() {
         digitalWrite(snow, LOW);
       }
       // cas 6
-      if(myObject["weather"]["id"] >= 500 && myObject["weather"]["id"] <= 504 ){
-        strip.clear();         //   Set all pixels in RAM to 0 (off)
+      if(int(myObject["weather"]["id"]) >= 500 && int(myObject["weather"]["id"]) <= 504 ){
+        strip.clear();         // Set all pixels in RAM to 0 (off)
         digitalWrite(sun, HIGH);
         digitalWrite(cloud, HIGH);
         digitalWrite(rain, HIGH);
@@ -165,22 +160,22 @@ void loop() {
         digitalWrite(cloud, LOW);
         digitalWrite(rain, LOW);
       }
-      if (myObject["main"]["temp"]<0){ // change a to temperature
-        Tcolor = strip.Color(0, 0, 255);//blue
+      if (int(myObject["main"]["temp"])<0) { // change a to temperature
+        Tcolor = strip.Color(0, 0, 255); // blue
       }
-      if (myObject["main"]["temp"]>0 && myObject["main"]["temp"]<10){
+      if (int(myObject["main"]["temp"])>0 && int(myObject["main"]["temp"])<10) {
         Tcolor = strip.Color(0, 255, 255);
       }
-      if (myObject["main"]["temp"]>10 && myObject["main"]["temp"] <20){
+      if (int(myObject["main"]["temp"])>10 && int(myObject["main"]["temp"]) <20) {
         Tcolor = strip.Color(0, 255, 50);
       }
-      if (myObject["main"]["temp"]>20 && myObject["main"]["temp"] <30){
+      if (int(myObject["main"]["temp"])>20 && int(myObject["main"]["temp"]) <30) {
       Tcolor = strip.Color(255, 255, 0);
       }
-      if (myObject["main"]["temp"]>30 && myObject["main"]["temp"] <40){
+      if (int(myObject["main"]["temp"]) >30 && int(myObject["main"]["temp"]) < 40) {
       Tcolor = strip.Color(255, 150, 50);
       }
-      else (myObject["main"]["temp"]>40){
+      else if (int(myObject["main"]["temp"])>40){
         Tcolor = strip.Color(255, 0, 0);//red
       }
       strip.setPixelColor(wifi_led_statue,Tcolor);       // strip.Color(225, 25, 75) Set pixel's color (in RAM)
@@ -197,13 +192,16 @@ void loop() {
     }
     lastTime = millis();
   }
+ }
 }
 
 String httpGETRequest(const char* serverName) {
+  WiFiClient client;
   HTTPClient http;
+  
     
   // Your IP address with path or Domain name with URL path 
-  http.begin(serverName);
+  http.begin(client, serverName);
   
   // Send HTTP POST request
   int httpResponseCode = http.GET();
