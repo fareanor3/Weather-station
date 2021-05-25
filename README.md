@@ -57,5 +57,5 @@ ___
 
 #### hésitez pas ! laissez vos retours !
 
-![Profile views](https://gpvc.arturio.dev/fareanor3)
 [<img src='https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/github.svg' alt='github' height='40'>](https://github.com/fareanor3)
+![Profile views](https://gpvc.arturio.dev/fareanor3)
