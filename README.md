@@ -11,11 +11,11 @@ Vous devrez importer des bibliotèques exterieurs dont:
 
 Dans arduino allez dans preference ( crl + , ) puis dans url de gestion de carte supplementaires collez : "http://arduino.esp8266.com/stable/package_esp8266com_index.json" et valider.
 
-|case | Sun | cloud | rain | snow |  total weather id |
-| ------------- |:-------------:| :-----:|:-------------:|:-------------:|-----:|
-| 1  |  X  |       |      |      |       800         |
-| 2  |  X  |   X   |      |      |       801         |
-| 3  |     |   X   |      |      |      802-4        |
-| 4  |     |   X   |  X   |      |  200-321 520-31   |
-| 5  |     |   X   |      |  X   |      600-22       |
-|  6  |  X  |   X   |  X   |      |       500-4       |
+|`case` | Sun | cloud | rain | snow |  total weather id |
+| ------------- |:-------------:| :-----:|:-------------:|:-------------:|:-----:|
+| `1`  |  X  |       |      |      |       800         |
+| `2`  |  X  |   X   |      |      |       801         |
+| `3`  |     |   X   |      |      |      802-4        |
+| `4`  |     |   X   |  X   |      |  200-321 520-31   |
+| `5`  |     |   X   |      |  X   |      600-22       |
+|  `6`  |  X  |   X   |  X   |      |       500-4       |
