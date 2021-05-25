@@ -3,13 +3,25 @@
 # Weather-station
 
 Project of the Innovation course of ESME SUDRIA PARIS of SUP en 2020 for the OuiAreMaker competition ( https://ouiaremakers.com/ ). The mission of the project is to retrieve via an api the weather and the temperature and to display it in transparent on a plexiglass plate by LEDs. we put a point of honour on the simplicity and the minimalism.
-Documentation : https://www.youtube.com/watch?v=McwarmDpQXo
 
 ## importations:
 
 Vous devrez importer des bibliotèques exterieurs dont:
 
->Arduino_JSON 
+```arduino
+
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <Adafruit_NeoPixel.h>
+
+// strip led import
+
+#ifdef __AVR__
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+```
+> si elle sont correctment installer elles s'afficheront en couleurs.
 
 Dans arduino allez dans preference ( crl + , ) puis dans url de gestion de carte supplementaires collez : "http://arduino.esp8266.com/stable/package_esp8266com_index.json" et valider.
 
@@ -25,18 +37,17 @@ Dans arduino allez dans preference ( crl + , ) puis dans url de gestion de carte
 
 ___
 
-Vous devez importer les bibliothèques suivantes : si c'est le cas alors elle s'afficherons en couleurs
+** API
 
-```arduino
+Voici comment fontionnne l'ardino grace a l'API :
 
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClient.h>
-#include <Adafruit_NeoPixel.h>
+![API](https://raw.githubusercontent.com/fareanor3/Weather-station/main/API.png?token=AOSHXRXU3LUCZYRCQ4C774LAW2XQU)
 
-// strip led import
+Gernerer votre clef API sur [OpenWeatherMap](https://openweathermap.org/api) et coller la à la place de APIKey
 
-#ifdef __AVR__
-#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
-#endif
-```
+![APIKey](https://raw.githubusercontent.com/fareanor3/Weather-station/main/APIKey.png?token=AOSHXRXO52TQWQKM5ERKPJ3AW2XRG)
+
+enfin réliser ce montage : ⚠ Bien faire correpondre le pin de sortie avec le code !
+
+![montage](https://raw.githubusercontent.com/fareanor3/Weather-station/main/montage.png?token=AOSHXRXGS5VNF2MFYWUX7MLAW2XSU)
+
