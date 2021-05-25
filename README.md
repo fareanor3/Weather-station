@@ -21,3 +21,22 @@ Dans arduino allez dans preference ( crl + , ) puis dans url de gestion de carte
 | `4`  |     |   X   |  X   |      |  200-321 520-31   |
 | `5`  |     |   X   |      |  X   |      600-22       |
 |  `6`  |  X  |   X   |  X   |      |       500-4       |
+
+
+___
+
+Vous devez importer les bibliothèques suivantes : si c'est le cas alors elle s'afficherons en couleurs
+
+```arduino
+
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <Adafruit_NeoPixel.h>
+
+// strip led import
+
+#ifdef __AVR__
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+```
