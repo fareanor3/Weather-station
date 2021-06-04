@@ -13,7 +13,6 @@ ___
 Vous devrez importer des bibliotèques exterieurs dont:
 
 ```arduino
-
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
