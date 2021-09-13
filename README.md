@@ -3,7 +3,7 @@
 # Weather-station
 ___
 
->Project of the Innovation course of ESME SUDRIA PARIS of SUP en 2020 for the OuiAreMaker competition ( https://ouiaremakers.com/ ). 
+>Project of the Innovation course of ESME SUDRIA PARIS of SUP en 2020 for the OuiAreMaker competition ( https://ouiaremakers.com/posts/tutoriel-diy-uwu-weather-api-meteo ). 
 >The mission of the project is to retrieve via an api the weather and the temperature and to display it in transparent on a plexiglass plate by LEDs. 
 >We put a point of honour on the simplicity and the minimalism.
 ___
